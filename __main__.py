@@ -17,9 +17,9 @@ finally:
     cursor.execute("use toucri")
 
 def tables():
-    outcome_table_query = "create table outcomes(match_no int not null primary key , team_won varchar(10), team_lost varchar(10))"
+    outcome_table_query = "create table outcomes(match_no int not null primary key, team_won varchar(10), team_lost varchar(10))"
     cursor.execute(outcome_table_query)
-    points_table_query = "create table points(team varchar(10), points int)"
+    points_table_query = "create table points(rank int default null, team varchar(10), points int)"
     cursor.execute(points_table_query)
     teams = eval(input("Give list of teams: "))
     for team in teams:
@@ -35,7 +35,7 @@ def per_match():
     team_lost = input("Loser name: ")
     teams = [team_won, team_lost]
     for team in teams:
-        for i in range(2):
+        for _ in range(2):
             bats = input("Enter batsmans name: ")
             score = int(input("Enter score: "))
             bowls = input("Enter bowlers name: ")
@@ -50,8 +50,37 @@ def per_match():
     cursor.execute(points_update_query)
     connection.commit()
 
+def rank():
+    rank_query = "select team, points, @curRank:= @CurRank as rank from points p, (select @CurRank:=0) r order by points"
+    cursor.execute(rank_query)
+    points_data = cursor.fetchall()
+    points_print = []
+    for row in points_data:
+        points_print.append(list(row))
+    print(tabulate(points_print, headers=['team', 'points', 'rank'], tablefmt="pretty"))
 
 
 
-
-
+while True:
+    try:
+        print("==================")
+        crud = int(input("Please select:\n\t0. Exit\n\t1. Create\n\t2. Search\n\t3. Update\n\t4. Delete\nchoice: "))
+        if crud == 0:
+            print("So long..!\n==================")
+            break
+        elif crud == 1:
+            create()
+        elif crud == 2:
+            team_to_search = input("Enter team name: ")
+            search(team_to_search)
+        elif crud == 3:
+            record_to_update = input("Enter name of book to update: ")
+            update(record_to_update)
+        elif crud == 4:
+            sno_to_delete = input("Enter sno of product to delete: ")
+            delete(sno_to_delete)
+        else:
+            print("Invalid choice.")
+            print("==================")
+    except:
+        print("Invalid choice.")

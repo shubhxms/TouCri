@@ -26,7 +26,10 @@ def tables():
         points_query = "insert into points(team, points) values({},0)".format(team)
         cursor.execute(points_query)
         connection.commit()
-
+        cursor.close()
+        cursor = connection.cursor()
+        team_table_query = "create table {}(match_no int, opponent varchar(10), result varchar(10))".format(team)
+        cursor.execute(team_table_query)
 
 def per_match():
     match_no = int(input("Match Number: "))
@@ -49,6 +52,7 @@ def per_match():
     points_update_query = "update points set points = points + 2 where team = {}".format(team_won)
     cursor.execute(points_update_query)
     connection.commit()
+    insert_into_team_table_query = ""
 
 def rank():
     rank_query = "select team, points, @curRank:= @CurRank as rank from points p, (select @CurRank:=0) r order by points"
@@ -60,25 +64,31 @@ def rank():
     print(tabulate(points_print, headers=['team', 'points', 'rank'], tablefmt="pretty"))
 
 
+def search():
+    pass
+
 
 while True:
     try:
         print("==================")
-        crud = int(input("Please select:\n\t0. Exit\n\t1. Create\n\t2. Search\n\t3. Update\n\t4. Delete\nchoice: "))
+        crud = int(input("Please select:\n\t0. Exit\n\t1. Create\n\t2. Search\n\t3. Update\n\t4. Delete\n\t5. Points table\nchoice: "))
         if crud == 0:
             print("So long..!\n==================")
             break
         elif crud == 1:
-            create()
+            per_match()
         elif crud == 2:
             team_to_search = input("Enter team name: ")
             search(team_to_search)
-        elif crud == 3:
-            record_to_update = input("Enter name of book to update: ")
-            update(record_to_update)
-        elif crud == 4:
-            sno_to_delete = input("Enter sno of product to delete: ")
-            delete(sno_to_delete)
+        # elif crud == 3:
+        #     record_to_update = input("Enter name of book to update: ")
+        #     update(record_to_update)
+        #     rank()
+        # elif crud == 4:
+        #     sno_to_delete = input("Enter sno of product to delete: ")
+        #     delete(sno_to_delete)
+        elif crud == 5:
+            rank()
         else:
             print("Invalid choice.")
             print("==================")

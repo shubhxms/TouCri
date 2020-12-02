@@ -16,6 +16,7 @@ finally:
     cursor.execute("use toucri")
 
 def tables():
+    global cursor
     cursor = connection.cursor()
     outcome_table_query = "create table if not exists outcomes(match_no int not null primary key, team_won varchar(10), team_lost varchar(10))"
     cursor.execute(outcome_table_query)

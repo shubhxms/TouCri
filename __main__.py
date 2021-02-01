@@ -1,10 +1,12 @@
+from os import sys
+from getpass import getpass
 try:
-    from os import sys
-    import mysql.connector as mc
-    from getpass import getpass
     from tabulate import tabulate
-except:
-    print('Some modules may not be dowloaded!!\n')
+    import mysql.connector as mc
+except ModuleNotFoundError:
+    print('Some modules may not be dowloaded!!:')
+    print('either mysql.connector')
+    print('or tabulate')
     sys.exit()
 
 try:
@@ -212,4 +214,4 @@ while True:
             print("==================")
     except Exception as e:
         print(e)
-        print("Invalid choice.")
+        print("Something went wrong!!")

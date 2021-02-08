@@ -2,7 +2,7 @@
 
 **TouCri** is a MySQL based minimalistic cricket tournament manager. With it you can store, retrieve, update and delete records about your tournament matches.
 
-## About
+## Modules
 **TouCri** uses the following modules:
 1. mysql.connector (external module)
 2. getpass

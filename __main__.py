@@ -162,7 +162,7 @@ def updt_match_dtl(match_number):
         cursor.execute("select * from {} where team = '{}'".format("matchnum"+str(match_number), teams[ch - 1]))
         for i in cursor.fetchall():
             print(i)
-        choice = input("What to update?\n1.Batsman\n2.Bowler: ")
+        choice = int(input("What to update?\n1.Batsman\n2.Bowler\nchoices: "))
         if choice == 1:
             cursor.execute("select batsman, score from {} where team = '{}'".format('matchnum'+str(match_number), teams[ch - 1]))
             for i in cursor.fetchall():
@@ -223,7 +223,7 @@ def whole_tour():
 while True:
     try:
         print("==================")
-        crud = int(input("Please select:\n\t0. Exit\n\t1. Create\n\t2. Search\n\t3. Points table\n\t4. Delete match details\n\t5. Update\n\t6. Tournament Summary\n\t7. Delete Tournament and exit\nchoice: "))
+        crud = int(input("Please select:\n\t0. Exit\n\t1. Add match\n\t2. Search\n\t3. Points table\n\t4. Delete match details\n\t5. Update\n\t6. Tournament Summary\n\t7. Delete Tournament and exit\nchoice: "))
         if crud == 0:
             connection.close()
             print("So long..!\n==================")

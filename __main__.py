@@ -150,8 +150,6 @@ def dlt_dtl(match_numb):
 
 def updt_match_dtl(match_number):
     try:
-        dlt_dtl(match_number)
-        per_match()
         cursor.execute("select team_won, team_lost from outcomes where match_no = {}".format(match_number))
         dat = cursor.fetchall()
         print("Select the team to update: ")
@@ -161,34 +159,36 @@ def updt_match_dtl(match_number):
         for j in teams:
             print(str(teams.index(j)+1)+'.', j)
         ch = int(input("choice: "))
-        if ch == 1:
-            #cursor.execute("delete from {} where team = {}".format("matchnum"+str(match_number), "'"+teams[0]+"'"))
-            for i in range(2):
-                str1 = str("Enter batsman number "+str(i+1)+" name: ")
-                bats = input(str1)
-                score = int(input("Enter score: "))
-                str2 = str("Enter bowler number "+str(i+1)+" name: ")
-                bowls = input(str2)
-                wick = int(input("Enter wickets: "))
-                insert_query = "insert into {0} (team, batsman, score, bowler, wickets) values({1},{2},{3},{4},{5})".format("matchnum"+str(match_number), "'"+team+"'", "'"+bats+"'", score, "'"+bowls+"'", wick)
-                update_query = "update {} set batsman = {}, score = {}, bowler = {}, wickets = {} where team = {}".format("matchnum"+str(match_number), "'"+bats+"'", score, "'"+bowls+"'", wick, "'"+teams[0]+"'")
-                cursor.execute(insert_query)
-                connection.commit()         
-        elif ch == 2:
-            cursor.execute("delete from {} where team = {}".format("matchnum"+str(match_number), "'"+teams[1]+"'"))
-            for i in range(2):
-                str1 = str("Enter batsman number "+str(i+1)+" name: ")
-                bats = input(str1)
-                score = int(input("Enter score: "))
-                str2 = str("Enter bowler number "+str(i+1)+" name: ")
-                bowls = input(str2)
-                wick = int(input("Enter wickets: "))
-                insert_query = "insert into {0} (team, batsman, score, bowler, wickets) values({1},{2},{3},{4},{5})".format("matchnum"+str(match_number), "'"+team+"'", "'"+bats+"'", score, "'"+bowls+"'", wick)
-                cursor.execute(insert_query)
+        cursor.execute("select * from {} where team = '{}'".format("matchnum"+str(match_number), teams[ch - 1]))
+        for i in cursor.fetchall():
+            print(i)
+        choice = input("What to update?\n1.Batsman\n2.Bowler: ")
+        if choice == 1:
+            cursor.execute("select batsman, score from {} where team = '{}'".format('matchnum'+str(match_number), teams[ch - 1]))
+            for i in cursor.fetchall():
+                print(i)
+            choose = input("Which batsman? (name): ")
+            new_runs = int(input("enter new score for batsman: "))
+            try:
+                cursor.execute("update {} set score = {} where batsman = '{}'".format("matchnum"+str(match_number), new_runs, choose))
                 connection.commit()
+                print("updated!")
+            except:
+                print("Something went wrong :/")
+        elif choice == 2:
+            cursor.execute("select bowler, wickets from {} where team = '{}'".format('matchnum'+str(match_number), teams[ch - 1]))
+            for i in cursor.fetchall():
+                print(i)
+            choose = input("Which bowler? (name): ")
+            new_wicks = int(input("enter new wickets for bowlwer: "))
+            try:
+                cursor.execute("update {} set wickets = {} where bowler = '{}'".format("matchnum"+str(match_number), new_wicks, choose))
+                connection.commit()
+                print("updated!")
+            except:
+                print("something went wrong :/")
         else:
-            print("invalid choice")
-            return
+            print("wrong choice. try again.")
     except:
         print("Something went wrong!")
         return

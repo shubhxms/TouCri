@@ -133,26 +133,62 @@ def rank():
 
 def dlt_dtl(match_numb):
     try:
+        cursor.execute("select team_won from outcomes where match_no = {}".format(str(match_numb)))
+        dat = cursor.fetchall()
+        won_team = dat[0][0]
         tbl_dlt_query = "drop table {}".format("matchnum"+str(match_numb))
         cursor.execute(tbl_dlt_query)
         connection.commit()
         outc_dlt_query = "delete from outcomes where match_no = {}".format(match_numb)
         cursor.execute(outc_dlt_query)
         connection.commit()
-        print('Match details deleted!')
+        cursor.execute("update points set point = point - 2 where team = {}".format("'"+won_team+"'"))
+        connection.commit()
     except:
         print("Something went wrong!")
         return
 
 def updt_match_dtl(match_number):
     try:
-        tbl_dlt_query = "drop table {}".format("matchnum"+str(match_number))
-        cursor.execute(tbl_dlt_query)
-        connection.commit()
-        outc_dlt_query = "delete from outcomes where match_no = {}".format(match_number)
-        cursor.execute(outc_dlt_query)
-        connection.commit()
+        dlt_dtl(match_number)
         per_match()
+        cursor.execute("select team_won, team_lost from outcomes where match_no = {}".format(match_number))
+        dat = cursor.fetchall()
+        print("Select the team to update: ")
+        teams = []
+        for i in dat[0]:
+            teams.append(i)
+        for j in teams:
+            print(str(teams.index(j)+1)+'.', j)
+        ch = int(input("choice: "))
+        if ch == 1:
+            #cursor.execute("delete from {} where team = {}".format("matchnum"+str(match_number), "'"+teams[0]+"'"))
+            for i in range(2):
+                str1 = str("Enter batsman number "+str(i+1)+" name: ")
+                bats = input(str1)
+                score = int(input("Enter score: "))
+                str2 = str("Enter bowler number "+str(i+1)+" name: ")
+                bowls = input(str2)
+                wick = int(input("Enter wickets: "))
+                insert_query = "insert into {0} (team, batsman, score, bowler, wickets) values({1},{2},{3},{4},{5})".format("matchnum"+str(match_number), "'"+team+"'", "'"+bats+"'", score, "'"+bowls+"'", wick)
+                update_query = "update {} set batsman = {}, score = {}, bowler = {}, wickets = {} where team = {}".format("matchnum"+str(match_number), "'"+bats+"'", score, "'"+bowls+"'", wick, "'"+teams[0]+"'")
+                cursor.execute(insert_query)
+                connection.commit()         
+        elif ch == 2:
+            cursor.execute("delete from {} where team = {}".format("matchnum"+str(match_number), "'"+teams[1]+"'"))
+            for i in range(2):
+                str1 = str("Enter batsman number "+str(i+1)+" name: ")
+                bats = input(str1)
+                score = int(input("Enter score: "))
+                str2 = str("Enter bowler number "+str(i+1)+" name: ")
+                bowls = input(str2)
+                wick = int(input("Enter wickets: "))
+                insert_query = "insert into {0} (team, batsman, score, bowler, wickets) values({1},{2},{3},{4},{5})".format("matchnum"+str(match_number), "'"+team+"'", "'"+bats+"'", score, "'"+bowls+"'", wick)
+                cursor.execute(insert_query)
+                connection.commit()
+        else:
+            print("invalid choice")
+            return
     except:
         print("Something went wrong!")
         return
@@ -202,6 +238,7 @@ while True:
         elif crud == 4:
             delete = int(input("Enter match number to be deleted: "))
             dlt_dtl(delete)
+            print('Match details deleted!')
         elif crud == 5:
             update = int(input("Enter match number to be updated: "))
             updt_match_dtl(update)
@@ -212,6 +249,5 @@ while True:
         else:
             print("Invalid choice.")
             print("==================")
-    except Exception as e:
-        print(e)
+    except:
         print("Something went wrong!!")

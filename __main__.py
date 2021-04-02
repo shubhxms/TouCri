@@ -70,7 +70,7 @@ def drop_db():
     cursor.execute(dropping_db_query)
     connection.commit()
     print('All the data related to the tournamanet has been deleted!! ')
-    sys.exit()        
+    sys.exit()
 
 tables()
 
@@ -95,19 +95,13 @@ def per_match():
                     wick = int(input("Enter wickets: "))
                     insert_query = "insert into {0} (team, batsman, score, bowler, wickets) values({1},{2},{3},{4},{5})".format("matchnum"+str(match_no), "'"+team+"'", "'"+bats+"'", score, "'"+bowls+"'", wick)
                     cursor.execute(insert_query)
-                    #print("executed")
                     connection.commit()
-                    #print("commited")
             outcomes_query = "insert into outcomes(match_no, team_won, team_lost) values({},{},{})".format(match_no, "'"+team_won+"'", "'"+team_lost+"'")
             cursor.execute(outcomes_query)
-            #print('executed90')
             connection.commit()
-            #print('committed92')
             points_update_query = "update points set point = point + 2 where team = {}".format("'"+team_won+"'")
             cursor.execute(points_update_query)
-            #print('executed95')
             connection.commit()
-            #print('committed97')
             break
         else:
             drop_query = "drop table {}".format("matchnum"+str(match_no))
